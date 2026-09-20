@@ -7,7 +7,7 @@ from sklearn.metrics import roc_curve, auc, confusion_matrix, ConfusionMatrixDis
 # --- Page Configuration ---
 st.set_page_config(page_title="SHUDDHOTA Intelligence Dashboard", layout="wide", initial_sidebar_state="collapsed")
 
-# --- Premium Custom CSS Styling ---
+# --- Premium Custom CSS Styling for Modern UI/UX ---
 st.markdown("""
 <style>
     .main {
@@ -73,36 +73,89 @@ def load_data(file):
         except FileNotFoundError:
             return None
 
-# --- Popup Modal for "How It Works" ---
-@st.dialog("✨ How SHUDDHOTA Works (Simple Guide)")
-def show_how_it_works():
-    st.markdown("### Welcome to the SHUDDHOTA Evaluation Portal")
-    st.write("This tool helps protect society from fake AI-generated videos (deepfakes) and misinformation[cite: 1].")
-    
-    st.markdown("---")
-    st.markdown("#### 🔄 The 3-Step Process:")
+# --- POPUP MODALS ---
+@st.dialog("💡 Core Idea of SHUDDHOTA")
+def show_core_idea():
+    st.markdown("### The Philosophy Behind SHUDDHOTA")
+    st.write("In Bangla, *Shuddhota* means purity, correctness, and integrity. The core idea is that mitigating AI-generated synthetic media (deepfakes) cannot be solved by technical detection alone[cite: 1].")
     st.markdown("""
-    1. **Upload Data:** Drop your survey or test CSV file into the portal below.
-    2. **Automated Analysis:** The system instantly tests the accuracy of the AI detection and measures public trust (Cronbach's Alpha).
-    3. **Interactive Decision Testing:** Use the algorithm slider at the bottom to see how the system handles uncertainty and prevents false accusations.
+    **The Six-Layer Citizen-First Architecture:**
+    1. **L1 - Helpline:** A single, trusted intake gateway for citizens.
+    2. **L2 - Score:** Transparent multi-evidence verification outputs.
+    3. **L3 - Card:** Practical digital and media literacy tools.
+    4. **L4 - Shokti:** Supervised community and youth support networks.
+    5. **L5 - Court:** Rapid, specialized legal protection pathways.
+    6. **L6 - Fund:** Victim compensation and recovery assistance.
     """)
-    st.markdown("---")
-    st.markdown("#### 🧮 The Scoring Formula:")
-    st.latex(r"S = 100 \times (0.35D + 0.30P + 0.20F + 0.15C)")
-    st.caption("Combines AI Detection (35%), Digital Provenance (30%), Fact-Checking (20%), and Contextual Risk (15%)[cite: 1].")
-    
-    if st.button("Got it, let's explore!", type="primary", use_container_width=True):
-        st.rerun()
 
-# --- HEADER SECTION ---
-header_col1, header_col2 = st.columns([5, 1])
-with header_col1:
-    st.markdown("# 🛡️ SHUDDHOTA Intelligence Dashboard")
-    st.markdown("##### *Integrated Framework for Synthetic Media Governance & Resilience*[cite: 1]")
-with header_col2:
-    st.write("")
-    if st.button("❓ How It Works", use_container_width=True):
-        show_how_it_works()
+@st.dialog("⚙️ How the System Works")
+def show_how_it_works():
+    st.markdown("### Technical & Analytical Workflow")
+    st.write("This dashboard automates the evaluation pipeline specified in Chapter 9 of the thesis[cite: 1].")
+    st.markdown("""
+    * **Data Processing:** Ingests CSV records containing Likert survey scales and binary media ground truth labels.
+    * **Reliability Testing:** Mathematically computes Cronbach's Alpha across constructs (Digital Literacy, Trust, Willingness to Report).
+    * **Machine Learning Pipeline:** Evaluates classification performance (ROC AUC, Precision-Recall, Confusion Matrix) using out-of-fold calibration logic.
+    * **Multi-Evidence Formula:** Combines model scores using registered weights:
+    """)
+    st.latex(r"S = 100 \times (0.35D + 0.30P + 0.20F + 0.15C)")
+    st.caption("Where D=Detector, P=Provenance, F=Fact-Check, C=Context.")
+
+@st.dialog("🎯 What This App Tries to Prove")
+def show_what_it_proves():
+    st.markdown("### Research & System Objectives")
+    st.markdown("""
+    This interactive application and its underlying code aim to prove three core pillars:
+    1. **Reproducibility:** That the statistical pipeline is completely transparent, bug-free, and yields identical metrics when fed structured data.
+    2. **Decision Safety:** That incorporating an uncertainty window (abstention logic) prevents automated false positives from triggering wrongful accusations.
+    3. **Holistic Integration:** That a combined socio-technical framework scores higher in functional coverage and operational resilience than isolated technical tools.
+    """)
+
+@st.dialog("🏆 Uniqueness & Superiority")
+def show_uniqueness():
+    st.markdown("### Why SHUDDHOTA is Better Than Existing Approaches")
+    st.markdown("""
+    * **Beyond Single Detectors (C1):** Standard tools only output a probability score without offering a legal, reporting, or remedy path. SHUDDHOTA covers the *entire* citizen journey (100% functional coverage).
+    * **Context-Aware Calibration:** Unlike brittle machine learning classifiers, our model uses Platt scaling and multi-evidence blending (Provenance + Fact-checking) to adapt to low-resource and Bangla linguistic constraints[cite: 1].
+    * **Two-Track Evaluation:** Formally validated via a rigorous mixed-track framework combining functional completeness and quantitative precision.
+    """)
+
+@st.dialog("👨‍💻 Author & Supervisor Information")
+def show_author_info():
+    st.markdown("### Academic Credentials")
+    st.markdown("""
+    **Thesis Title:**  
+    *Mitigating AI-Generated Synthetic Media Threats in Bangladesh: An Integrated Framework for Detection, Policy, and Societal Resilience*[cite: 1]
+    
+    **Author / Researcher:**  
+    * **Name:** Syed Ashik Mahmud[cite: 1]
+    * **Roll/ID No:** 6241020202[cite: 1]
+    * **Registration No:** 00685[cite: 1]
+    * **Degree:** Master of Science in Computer and Communication Engineering (CCE)[cite: 1]
+    
+    **Supervisor:**  
+    * **Name:** Professor Golam Md. Muradul Bashir[cite: 1]
+    * **Department:** Department of Computer and Communication Engineering (CCE)[cite: 1]
+    * **Institution:** Patuakhali Science and Technology University (PSTU), Bangladesh[cite: 1]
+    """)
+
+# --- HEADER SECTION WITH CLEAN ACTION BUTTONS ---
+st.markdown("# 🛡️ SHUDDHOTA Intelligence Dashboard")
+st.markdown("##### *Integrated Framework for Synthetic Media Governance & Resilience in Bangladesh*[cite: 1]")
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Navigation / Info Action Buttons Row
+b1, b2, b3, b4, b5 = st.columns(5)
+with b1:
+    if st.button("💡 Core Idea", use_container_width=True): show_core_idea()
+with b2:
+    if st.button("⚙️ How It Works", use_container_width=True): show_how_it_works()
+with b3:
+    if st.button("🎯 What It Proves", use_container_width=True): show_what_it_proves()
+with b4:
+    if st.button("🏆 Uniqueness", use_container_width=True): show_uniqueness()
+with b5:
+    if st.button("👨‍💻 Author & Supervisor", use_container_width=True): show_author_info()
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -111,7 +164,7 @@ st.markdown("""
 <div class="info-banner">
     <b>👋 Welcome!</b> This dashboard runs quantitative evaluations dynamically. 
     <b>Step 1:</b> Upload your custom dataset below to update all metrics, charts, and reliability scores instantly. <br>
-    <b>Step 2:</b> Review real-time performance analytics. <br>
+    <b>Step 2:</b> Review real-time performance analytics and data proof. <br>
     <b>Step 3:</b> Test the decision-making engine at the bottom.
 </div>
 """, unsafe_allow_html=True)
@@ -143,7 +196,6 @@ current_acc = accuracy_score(y_true, preds)
 current_f1 = f1_score(y_true, preds, zero_division=0)
 current_brier = brier_score_loss(y_true, y_prob)
 
-# Handle edge case if all targets belong to a single class in custom CSV
 try:
     fpr, tpr, _ = roc_curve(y_true, y_prob)
     current_auc = auc(fpr, tpr)
