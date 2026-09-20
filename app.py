@@ -49,7 +49,6 @@ st.markdown("""
         border-left: 4px solid #3b82f6;
         padding: 15px;
         border-radius: 0 8px 8px 0;
-        margin-bottom: 20px;
         color: #1e40af;
     }
     .footer {
@@ -185,13 +184,15 @@ with b5:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# --- GUIDANCE BANNER ---
+# --- GUIDANCE BANNER INSIDE A CLEAN CARD ---
 st.markdown("""
-<div class="info-banner">
-    <b>👋 Welcome!</b> This dashboard runs quantitative evaluations dynamically. 
-    <b>Step 1:</b> Upload your custom dataset below to update all metrics, charts, and reliability scores instantly. <br>
-    <b>Step 2:</b> Review real-time performance analytics, data proof, and click <b>📖 Thesis Mapping</b> above to review how every metric relates to the research. <br>
-    <b>Step 3:</b> Test the decision-making engine at the bottom.
+<div class="card">
+    <div class="info-banner">
+        <b>👋 Welcome!</b> This dashboard runs quantitative evaluations dynamically. <br>
+        <b>Step 1:</b> Upload your custom dataset below to update all metrics, charts, and reliability scores instantly. <br>
+        <b>Step 2:</b> Review real-time performance analytics, data proof, and click <b>📖 Thesis Mapping</b> above to review how every metric relates to the research. <br>
+        <b>Step 3:</b> Test the decision-making engine at the bottom.
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
