@@ -7,7 +7,7 @@ from sklearn.metrics import roc_curve, auc, confusion_matrix, ConfusionMatrixDis
 # --- Page Configuration ---
 st.set_page_config(page_title="SHUDDHOTA Intelligence Dashboard", layout="wide", initial_sidebar_state="collapsed")
 
-# --- Premium Custom CSS Styling for Modern UI/UX ---
+# --- Premium Custom CSS Styling for Mobile-Ready & Modern UI/UX ---
 st.markdown("""
 <style>
     .main {
@@ -21,6 +21,7 @@ st.markdown("""
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.05);
         border: 1px solid #e5e7eb;
         text-align: center;
+        margin-bottom: 10px;
     }
     .card {
         background-color: #ffffff;
@@ -73,8 +74,8 @@ def load_data(file):
         except FileNotFoundError:
             return None
 
-# --- POPUP MODALS ---
-@st.dialog("💡 Core Idea of SHUDDHOTA")
+# --- POPUP MODALS (With width="large" for perfect responsive fitting) ---
+@st.dialog("💡 Core Idea of SHUDDHOTA", width="large")
 def show_core_idea():
     st.markdown("### The Philosophy Behind SHUDDHOTA")
     st.write("In Bangla, *Shuddhota* means purity, correctness, and integrity. The core idea is that mitigating AI-generated synthetic media (deepfakes) cannot be solved by technical detection alone[cite: 1].")
@@ -88,7 +89,7 @@ def show_core_idea():
     6. **L6 - Fund:** Victim compensation and recovery assistance[cite: 1].
     """)
 
-@st.dialog("⚙️ How the System Works")
+@st.dialog("⚙️ How the System Works", width="large")
 def show_how_it_works():
     st.markdown("### Technical & Analytical Workflow")
     st.write("This dashboard automates the evaluation pipeline specified in Chapter 9 of the thesis[cite: 1].")
@@ -101,7 +102,7 @@ def show_how_it_works():
     st.latex(r"S = 100 \times (0.35D + 0.30P + 0.20F + 0.15C)")
     st.caption("Where D=Detector (35%), P=Provenance (30%), F=Fact-Check (20%), C=Context (15%)[cite: 1].")
 
-@st.dialog("📖 Thesis Mapping & Metrics Guide")
+@st.dialog("📖 Thesis Mapping & Metrics Guide", width="large")
 def show_thesis_mapping():
     st.markdown("### Detailed Thesis Mapping & Scientific Relation")
     st.write("Here is how every metric and visualization on this dashboard directly ties back to the core objectives of the thesis[cite: 1]:")
@@ -109,33 +110,33 @@ def show_thesis_mapping():
     st.markdown("---")
     st.markdown("#### 📊 Quantitative Performance Metrics (Track B)")
     st.markdown("""
-    * **ROC AUC Score:** Measures the overall ability of the integrated SHUDDHOTA pipeline to discriminate between genuine media and AI-generated synthetic deepfakes across all decision thresholds. *Relation:* Proves that combining the ResNet-50 + LSTM baseline model with multi-evidence signals yields an 'Excellent' classification standard (>0.90) for the Site J simulation frame ($n=100$)[cite: 1].
-    * **F1 Harmonized Score:** The harmonic mean between precision and recall, balancing authentic and manipulated content. *Relation:* Demonstrates that the system minimizes both false positives and false negatives to protect freedom of expression in Bangladesh[cite: 1].
-    * **Overall Accuracy:** The raw percentage of correctly classified instances. *Relation:* Establishes baseline operational correctness before uncertainty abstention is applied[cite: 1].
-    * **Brier Calibration Loss:** Measures mean squared error of predicted probabilities after Platt scaling. *Relation:* Proves model outputs are reliably calibrated probabilities rather than uncalibrated raw scores (<0.15)[cite: 1].
+    * **ROC AUC Score:** Measures overall discrimination capacity between genuine media and synthetic deepfakes across all thresholds. *Relation:* Proves that combining the ResNet-50 + LSTM baseline model with multi-evidence signals yields an 'Excellent' classification standard (>0.90) for the Site J simulation frame ($n=100$)[cite: 1].
+    * **F1 Harmonized Score:** Harmonic mean between precision and recall, balancing authentic and manipulated content. *Relation:* Demonstrates minimization of false positives and false negatives to protect freedom of expression[cite: 1].
+    * **Overall Accuracy:** Raw percentage of correctly classified instances. *Relation:* Establishes baseline operational correctness before uncertainty abstention[cite: 1].
+    * **Brier Calibration Loss:** Measures mean squared error of predicted probabilities after Platt scaling. *Relation:* Proves model outputs are reliably calibrated probabilities (<0.15)[cite: 1].
     """)
 
     st.markdown("---")
     st.markdown("#### 📈 Visual Diagnostic Charts")
     st.markdown("""
-    * **ROC Curve:** Graphically displays True Positive Rate vs. False Positive Rate. *Relation:* Backs up the high ROC AUC metric (~0.944) and validates classification power[cite: 1].
-    * **Precision-Recall Curve:** Focuses on the 'Synthetic' class performance. *Relation:* Shows how precision holds up as recall increases to ensure flagged deepfakes are genuinely malicious[cite: 1].
-    * **Confusion Matrix:** Explicit breakdown of True/False Positives and Negatives under a 0.5 cutoff. *Relation:* Gives exact error counts[cite: 1].
-    * **Media Task Profile:** Illustrates the balanced 50/50 experimental design of the Site J simulation frame ($n=50$ authentic, $n=50$ synthetic). *Relation:* Ensures metrics are not skewed by class imbalance[cite: 1].
+    * **ROC Curve:** Graphically displays True Positive Rate vs. False Positive Rate. *Relation:* Backs up the high ROC AUC metric (~0.944)[cite: 1].
+    * **Precision-Recall Curve:** Focuses on the 'Synthetic' class performance. *Relation:* Ensures flagged deepfakes are genuinely malicious[cite: 1].
+    * **Confusion Matrix:** Explicit breakdown of True/False Positives and Negatives under a 0.5 cutoff[cite: 1].
+    * **Media Task Profile:** Illustrates the balanced 50/50 experimental design of the Site J simulation frame ($n=50$ authentic, $n=50$ synthetic)[cite: 1].
     * **Internal Consistency (Cronbach’s Alpha > 0.70):** Evaluates the 24 Likert survey items across 6 constructs. *Relation:* Proves psychometric survey instruments are internally reliable[cite: 1].
     * **Comparative Fit Profile (Track A & Track B):** Visualizes Chapter 10's Two-Track evaluation against comparators (C1-C4). *Relation:* Proves SHUDDHOTA achieves 100% functional coverage and the highest integrated fit score (0.9407)[cite: 1].
     """)
 
-@st.dialog("🏆 Uniqueness & Superiority")
+@st.dialog("🏆 Uniqueness & Superiority", width="large")
 def show_uniqueness():
     st.markdown("### Why SHUDDHOTA is Better Than Existing Approaches")
     st.markdown("""
     * **Beyond Single Detectors (C1):** Standard tools only output a probability score without offering a legal, reporting, or remedy path. SHUDDHOTA covers the *entire* citizen journey (100% functional coverage)[cite: 1].
-    * **Context-Aware Calibration:** Unlike brittle machine learning classifiers, our model uses Platt scaling and multi-evidence blending (Provenance + Fact-checking) to adapt to low-resource and Bangla linguistic constraints[cite: 1].
+    * **Context-Aware Calibration:** Uses Platt scaling and multi-evidence blending (Provenance + Fact-checking) to adapt to low-resource and Bangla linguistic constraints[cite: 1].
     * **Two-Track Evaluation:** Formally validated via a rigorous mixed-track framework combining functional completeness and quantitative precision[cite: 1].
     """)
 
-@st.dialog("👨‍💻 Author & Supervisor Information")
+@st.dialog("👨‍💻 Author & Supervisor Information", width="large")
 def show_author_info():
     st.markdown("### Academic Credentials")
     st.markdown("""
@@ -159,8 +160,8 @@ st.markdown("# 🛡️ SHUDDHOTA Intelligence Dashboard")
 st.markdown("##### *Integrated Framework for Synthetic Media Governance & Resilience in Bangladesh*[cite: 1]")
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Navigation / Info Action Buttons Row (6 Buttons now, perfectly spaced)
-b1, b2, b3, b4, b5, b6 = st.columns(6)
+# Navigation Buttons Row (Responsive columns)
+b1, b2, b3, b4, b5 = st.columns(5)
 with b1:
     if st.button("💡 Core Idea", use_container_width=True): show_core_idea()
 with b2:
@@ -298,6 +299,7 @@ with tab1:
         ax1.set_ylabel('True Positive Rate', fontsize=9)
         ax1.set_title('ROC Curve (Dynamic)', fontsize=10, fontweight='bold')
         ax1.legend(loc="lower right", fontsize=8)
+        plt.tight_layout()
         st.pyplot(fig1)
 
     with f_col2:
@@ -309,6 +311,7 @@ with tab1:
         ax2.set_ylabel('Precision', fontsize=9)
         ax2.set_title('Precision-Recall Curve (Dynamic)', fontsize=10, fontweight='bold')
         ax2.legend(loc="lower left", fontsize=8)
+        plt.tight_layout()
         st.pyplot(fig2)
 
     with f_col3:
@@ -317,6 +320,7 @@ with tab1:
         disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Authentic', 'Synthetic'])
         disp.plot(cmap='Blues', values_format='d', ax=ax3)
         ax3.set_title("Confusion Matrix (Dynamic Cutoff)", fontsize=10, fontweight='bold')
+        plt.tight_layout()
         st.pyplot(fig3)
 
 with tab2:
@@ -330,6 +334,7 @@ with tab2:
         ax4.bar(['Authentic', 'Synthetic'], [authentic_count, synthetic_count], color=['#16a34a', '#dc2626'], width=0.5)
         ax4.set_title("Media-Task Profile (Dynamic Counts)", fontsize=10, fontweight='bold')
         ax4.set_ylabel("Case Count", fontsize=9)
+        plt.tight_layout()
         st.pyplot(fig4)
 
     with f_col5:
@@ -348,6 +353,7 @@ with tab2:
         ax5.set_title("Internal Consistency (Dynamic Alpha)", fontsize=10, fontweight='bold')
         ax5.set_ylim(0, 1.0)
         ax5.legend(fontsize=8)
+        plt.tight_layout()
         st.pyplot(fig5)
 
 with tab3:
@@ -367,6 +373,7 @@ with tab3:
     ax6.set_xticks(x)
     ax6.set_xticklabels(labels, fontsize=8)
     ax6.legend(fontsize=8)
+    plt.tight_layout()
     st.pyplot(fig6)
 
 st.markdown('</div>', unsafe_allow_html=True)
