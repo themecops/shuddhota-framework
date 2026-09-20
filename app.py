@@ -5,13 +5,9 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc, confusion_matrix, ConfusionMatrixDisplay, precision_recall_curve, average_precision_score, accuracy_score, f1_score, brier_score_loss
 
 # --- Page Configuration ---
-st.set_page_config(page_title="SHUDDHOTA Live Dashboard", layout="wide")
+st.set_page_config(page_title="SHUDDHOTA Dashboard", layout="wide", initial_sidebar_state="collapsed")
 
-st.title("🛡️ SHUDDHOTA Framework: Live Evaluation Dashboard")
-st.markdown("**Mitigating AI-Generated Synthetic Media Threats in Bangladesh**")
-st.markdown("---")
-
-# --- Helper Function: Cronbach's Alpha ---
+# --- Helper Functions ---
 def calculate_cronbach_alpha(df_items):
     """Calculates internal consistency for survey items."""
     n_items = df_items.shape[1]
@@ -20,12 +16,6 @@ def calculate_cronbach_alpha(df_items):
     t_var = df_items.sum(axis=1).var(ddof=1)
     if t_var == 0: return 0.0
     return (n_items / (n_items - 1)) * (1 - (item_vars.sum() / t_var))
-
-# --- 1. Sidebar & File Uploader ---
-st.sidebar.header("📂 1. Upload Data")
-st.sidebar.write("Upload a CSV file to dynamically calculate the framework's metrics. If no file is uploaded, the default simulated baseline (n=100) will be used.")
-
-uploaded_file = st.sidebar.file_uploader("Upload your survey CSV data", type=["csv"])
 
 @st.cache_data
 def load_data(file):
@@ -37,184 +27,188 @@ def load_data(file):
         except FileNotFoundError:
             return None
 
+# --- Popup Modal for "How It Works" ---
+@st.dialog("⚙️ How the SHUDDHOTA Pipeline Works")
+def show_how_it_works():
+    st.write("This dashboard mathematically demonstrates the SHUDDHOTA framework designed for Bangladesh.")
+    st.markdown("""
+    **1. The 6-Layer Architecture:**
+    * **L1 - Helpline:** Citizen entry point.
+    * **L2 - Score:** Multi-evidence output (Demonstrated below).
+    * **L3 - Card:** Media literacy.
+    * **L4 - Shokti:** Community support.
+    * **L5 - Court:** Urgent protection.
+    * **L6 - Fund:** Victim assistance.
+    
+    **2. Quantitative Processing:**
+    * **Data Input:** The system reads the CSV containing Likert responses and binary ground truth.
+    * **Reliability Check:** Calculates Cronbach's Alpha to ensure survey constructs are reliable (>0.70).
+    * **Model Evaluation:** Compares the simulated AI probability against the ground truth to generate the ROC AUC, Precision-Recall, and Brier metrics.
+    """)
+    st.markdown("**Scoring Formula (Section 8.4.2):**")
+    st.latex(r"S = 100 \times (0.35D + 0.30P + 0.20F + 0.15C)")
+    if st.button("Close"):
+        st.rerun()
+
+# --- HEADER SECTION ---
+col_title, col_button = st.columns([4, 1])
+with col_title:
+    st.title("SHUDDHOTA Framework Dashboard")
+    st.markdown("Mitigating AI-Generated Synthetic Media Threats in Bangladesh")
+with col_button:
+    st.write("") # Spacing
+    if st.button("ℹ️ How It Works (Popup)", use_container_width=True):
+        show_how_it_works()
+
+st.divider()
+
+# --- FULL WIDTH UPLOAD SECTION ---
+st.subheader("📂 1. Upload Dataset")
+uploaded_file = st.file_uploader("Upload your survey CSV data to generate real-time metrics. (Defaults to simulated n=100 baseline if empty).", type=["csv"])
+
 df = load_data(uploaded_file)
 
-if df is not None:
-    # Confirm Data Load
-    if uploaded_file is not None:
-        st.sidebar.success(f"✅ Custom Data Loaded: {len(df)} records.")
-    else:
-        st.sidebar.info(f"ℹ️ Using Baseline Simulated Data: {len(df)} records.")
+if df is None:
+    st.warning("Please upload a valid CSV file to view the results.")
+    st.stop()
 
-    # Validate required columns
-    required_cols = ["GroundTruthFake", "SHUDDHOTAProbability"]
-    if not all(col in df.columns for col in required_cols):
-        st.error(f"⚠️ Uploaded CSV must contain columns: {', '.join(required_cols)}")
-        st.stop()
+# Validate required columns
+required_cols = ["GroundTruthFake", "SHUDDHOTAProbability"]
+if not all(col in df.columns for col in required_cols):
+    st.error(f"Error: Uploaded CSV must contain columns: {', '.join(required_cols)}")
+    st.stop()
 
-    # Calculate dynamic metrics
-    preds = (df["SHUDDHOTAProbability"] >= 0.5).astype(int)
-    y_true = df["GroundTruthFake"]
-    y_prob = df["SHUDDHOTAProbability"]
+# --- CALCULATE DYNAMIC METRICS ---
+preds = (df["SHUDDHOTAProbability"] >= 0.5).astype(int)
+y_true = df["GroundTruthFake"]
+y_prob = df["SHUDDHOTAProbability"]
+
+current_acc = accuracy_score(y_true, preds)
+current_f1 = f1_score(y_true, preds)
+current_brier = brier_score_loss(y_true, y_prob)
+fpr, tpr, _ = roc_curve(y_true, y_prob)
+current_auc = auc(fpr, tpr)
+
+# --- RESULTS SECTION ---
+st.subheader("📊 2. Evaluation Results")
+if uploaded_file:
+    st.success(f"Custom Data Loaded Successfully: Analyzing {len(df)} records.")
+else:
+    st.info(f"Using Baseline Simulated Data: Analyzing {len(df)} records.")
+
+# Metrics Row
+m1, m2, m3, m4 = st.columns(4)
+m1.metric(label="ROC AUC", value=f"{current_auc:.4f}")
+m2.metric(label="F1 Score", value=f"{current_f1:.4f}")
+m3.metric(label="Accuracy", value=f"{current_acc:.4f}")
+m4.metric(label="Brier Score", value=f"{current_brier:.4f}")
+
+st.divider()
+
+# --- GRAPHS SECTION (TABS) ---
+st.subheader("📈 3. Visual Analysis")
+tab1, tab2, tab3 = st.tabs(["Classification Performance", "Dataset & Reliability", "Comparative Analysis"])
+
+with tab1:
+    fig_col1, fig_col2, fig_col3 = st.columns(3)
     
-    current_acc = accuracy_score(y_true, preds)
-    current_f1 = f1_score(y_true, preds)
-    current_brier = brier_score_loss(y_true, y_prob)
+    with fig_col1:
+        fig1, ax1 = plt.subplots(figsize=(5, 4))
+        ax1.plot(fpr, tpr, color='darkorange', lw=2, label=f'AUC = {current_auc:.3f}')
+        ax1.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+        ax1.set_xlabel('False Positive Rate')
+        ax1.set_ylabel('True Positive Rate')
+        ax1.set_title('ROC Curve')
+        ax1.legend(loc="lower right")
+        st.pyplot(fig1)
+
+    with fig_col2:
+        precision, recall, _ = precision_recall_curve(y_true, y_prob)
+        ap_score = average_precision_score(y_true, y_prob)
+        fig2, ax2 = plt.subplots(figsize=(5, 4))
+        ax2.plot(recall, precision, color='purple', lw=2, label=f'AP = {ap_score:.3f}')
+        ax2.set_xlabel('Recall')
+        ax2.set_ylabel('Precision')
+        ax2.set_title('Precision-Recall Curve')
+        ax2.legend(loc="lower left")
+        st.pyplot(fig2)
+
+    with fig_col3:
+        cm = confusion_matrix(y_true, preds)
+        fig3, ax3 = plt.subplots(figsize=(5, 4))
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Authentic', 'Synthetic'])
+        disp.plot(cmap='Blues', values_format='d', ax=ax3)
+        ax3.set_title("Confusion Matrix (Cutoff: 0.5)")
+        st.pyplot(fig3)
+
+with tab2:
+    fig_col4, fig_col5 = st.columns(2)
     
-    fpr, tpr, _ = roc_curve(y_true, y_prob)
-    current_auc = auc(fpr, tpr)
+    with fig_col4:
+        authentic_count = len(df[y_true == 0])
+        synthetic_count = len(df[y_true == 1])
+        fig4, ax4 = plt.subplots(figsize=(6, 4))
+        ax4.bar(['Authentic', 'Synthetic'], [authentic_count, synthetic_count], color=['#2ca02c', '#d62728'])
+        ax4.set_title("Simulated Media-Task Profile")
+        ax4.set_ylabel("Cases")
+        st.pyplot(fig4)
 
-    # --- 2. Live Metrics Section ---
-    st.header("📊 Quantitative Performance Overview (Track B)")
-    st.write(f"These metrics are calculated dynamically in real-time based on the {len(df)} records currently loaded in the system.")
-    
-    col1, col2, col3, col4 = st.columns(4)
-    col1.metric(label="ROC AUC", value=f"{current_auc:.4f}")
-    col2.metric(label="F1 Score", value=f"{current_f1:.4f}")
-    col3.metric(label="Accuracy", value=f"{current_acc:.4f}")
-    col4.metric(label="Brier Score", value=f"{current_brier:.4f}")
-
-    with st.expander("📖 Read how these metrics are calculated from the uploaded CSV"):
-        st.markdown("""
-        * **ROC AUC:** Measures the model's ability to separate authentic media from deepfakes. It plots True Positive Rate against False Positive Rate. A score of $1.0$ is perfect; $0.5$ is random guessing.
-        * **F1 Score:** The harmonic mean of precision and recall. It balances the risk of false alarms against the risk of missing a deepfake.
-        * **Accuracy:** The total percentage of correct predictions (both real and fake). 
-        * **Brier Score:** Evaluates probability calibration. It measures the mean squared difference between predicted probabilities and actual outcomes. A score closer to $0.0$ means the system's confidence levels are highly accurate.
-        """)
-
-    st.markdown("---")
-
-    # --- 3. Comprehensive Live Graphs & Explanations ---
-    st.header("📈 Interactive Framework Analysis")
-    
-    tab1, tab2, tab3 = st.tabs([
-        "🎯 Classification Performance", 
-        "📋 Dataset Profile & Survey Reliability", 
-        "⚖️ Comparative Analysis"
-    ])
-
-    with tab1:
-        st.subheader("Classification & Evaluation Metrics")
-        st.info("💡 **Supervisor Note:** These graphs are drawn live from the uploaded CSV data using `scikit-learn` and `matplotlib`. They prove the framework successfully distinguishes authentic vs. synthetic media.")
+    with fig_col5:
+        constructs = ['DL', 'PE', 'AC', 'PS', 'TR', 'WR']
+        alphas = []
+        for c in constructs:
+            cols = [f"{c}1", f"{c}2", f"{c}3", f"{c}4"]
+            if all(col in df.columns for col in cols):
+                alphas.append(calculate_cronbach_alpha(df[cols]))
+            else:
+                alphas.append(0.0)
         
-        fig_col1, fig_col2, fig_col3 = st.columns(3)
+        fig5, ax5 = plt.subplots(figsize=(6, 4))
+        ax5.bar(constructs, alphas, color='#1f77b4')
+        ax5.axhline(y=0.70, color='red', linestyle='--', label='Threshold (0.70)')
+        ax5.set_title("Internal Consistency (Cronbach's Alpha)")
+        ax5.set_ylim(0, 1.0)
+        st.pyplot(fig5)
 
-        # 1. ROC Curve
-        with fig_col1:
-            fig1, ax1 = plt.subplots(figsize=(5, 4))
-            ax1.plot(fpr, tpr, color='darkorange', lw=2, label=f'AUC = {current_auc:.3f}')
-            ax1.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
-            ax1.set_xlabel('False Positive Rate')
-            ax1.set_ylabel('True Positive Rate')
-            ax1.set_title('ROC Curve')
-            ax1.legend(loc="lower right")
-            st.pyplot(fig1)
-            st.caption("Shows the trade-off between detecting true fakes and triggering false alarms across all probability thresholds.")
+with tab3:
+    labels = ["C1", "C2", "C3", "C4", "SHUDDHOTA"]
+    auc_scores = [0.852, 0.803, 0.873, 0.941, current_auc] 
+    f1_scores = [0.747, 0.689, 0.809, 0.862, current_f1]
+    x = np.arange(len(labels))
+    width = 0.35
 
-        # 2. Precision-Recall Curve
-        with fig_col2:
-            precision, recall, _ = precision_recall_curve(y_true, y_prob)
-            ap_score = average_precision_score(y_true, y_prob)
-            fig2, ax2 = plt.subplots(figsize=(5, 4))
-            ax2.plot(recall, precision, color='purple', lw=2, label=f'AP = {ap_score:.3f}')
-            ax2.set_xlabel('Recall')
-            ax2.set_ylabel('Precision')
-            ax2.set_title('Precision-Recall Curve')
-            ax2.legend(loc="lower left")
-            st.pyplot(fig2)
-            st.caption("Focuses strictly on the performance of the 'Synthetic' class, highlighting precision at various recall levels.")
+    fig6, ax6 = plt.subplots(figsize=(8, 4))
+    ax6.bar(x - width/2, auc_scores, width, label='ROC AUC', color='#1f77b4')
+    ax6.bar(x + width/2, f1_scores, width, label='F1 Score', color='#ff7f0e')
+    ax6.set_ylabel('Scores')
+    ax6.set_title('Comparator Metric Profile (Track B)')
+    ax6.set_xticks(x)
+    ax6.set_xticklabels(labels)
+    ax6.legend()
+    st.pyplot(fig6)
 
-        # 3. Confusion Matrix
-        with fig_col3:
-            cm = confusion_matrix(y_true, preds)
-            fig3, ax3 = plt.subplots(figsize=(5, 4))
-            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=['Authentic', 'Synthetic'])
-            disp.plot(cmap='Blues', values_format='d', ax=ax3)
-            ax3.set_title("Confusion Matrix (Threshold: 0.5)")
-            st.pyplot(fig3)
-            st.caption("The exact count of correctly and incorrectly classified media files based on a strict $0.5$ cutoff.")
+st.divider()
 
-    with tab2:
-        st.subheader("Sample Profile & Internal Consistency (Cronbach's Alpha)")
-        st.info("💡 **Supervisor Note:** The Python script calculates Cronbach's Alpha mathematically directly from the CSV columns. An alpha over $0.70$ proves the survey questions reliably measure the same concept.")
-        
-        fig_col4, fig_col5 = st.columns(2)
-        
-        # 4. Sample Profile
-        with fig_col4:
-            authentic_count = len(df[y_true == 0])
-            synthetic_count = len(df[y_true == 1])
-            fig4, ax4 = plt.subplots(figsize=(6, 4))
-            ax4.bar(['Authentic', 'Synthetic'], [authentic_count, synthetic_count], color=['#2ca02c', '#d62728'])
-            ax4.set_title("Simulated Media-Task Profile")
-            ax4.set_ylabel("Cases")
-            st.pyplot(fig4)
-            st.caption("A perfectly balanced dataset ensures accuracy metrics are not artificially inflated by a majority class.")
+# --- ALGORITHM TESTER (Moved to main body for clean full-width look) ---
+st.subheader("⚙️ 4. Test SHUDDHOTA Decision Logic")
+st.write("Adjust the evidence weights to see how the system handles uncertainty. The integrated model uses calibrated detector evidence alongside provenance, fact-check, and contextual risk.")
 
-        # 5. Dynamic Reliability
-        with fig_col5:
-            constructs = ['DL', 'PE', 'AC', 'PS', 'TR', 'WR']
-            alphas = []
-            for c in constructs:
-                cols = [f"{c}1", f"{c}2", f"{c}3", f"{c}4"]
-                if all(col in df.columns for col in cols):
-                    alpha = calculate_cronbach_alpha(df[cols])
-                    alphas.append(alpha)
-                else:
-                    alphas.append(0.0) # Fallback if columns are missing in custom upload
-            
-            fig5, ax5 = plt.subplots(figsize=(6, 4))
-            bars = ax5.bar(constructs, alphas, color='#1f77b4')
-            ax5.axhline(y=0.70, color='red', linestyle='--', label='Acceptable Threshold (0.70)')
-            ax5.set_title("Internal Consistency (Cronbach's Alpha)")
-            ax5.set_ylim(0, 1.0)
-            ax5.legend()
-            st.pyplot(fig5)
-            st.caption("Calculated dynamically. If any bar falls below the red line, the survey questions need revision.")
-
-    with tab3:
-        st.subheader("Theoretical Comparative Evaluation")
-        st.info("💡 **Supervisor Note:** This visualizes Chapter 10. It compares SHUDDHOTA to standard single-detector frameworks (C1) and provenance-first models (C2), proving our integrated multi-evidence model is superior.")
-        
-        labels = ["C1", "C2", "C3", "C4", "SHUDDHOTA"]
-        # In a real scenario, comparators might also be dynamic, but here we use your baseline theoretical estimates.
-        auc_scores = [0.852, 0.803, 0.873, 0.941, current_auc] 
-        f1_scores = [0.747, 0.689, 0.809, 0.862, current_f1]
-
-        x = np.arange(len(labels))
-        width = 0.35
-
-        fig6, ax6 = plt.subplots(figsize=(8, 4))
-        ax6.bar(x - width/2, auc_scores, width, label='ROC AUC', color='#1f77b4')
-        ax6.bar(x + width/2, f1_scores, width, label='F1 Score', color='#ff7f0e')
-
-        ax6.set_ylabel('Scores')
-        ax6.set_title('Comparator Metric Profile (Track B)')
-        ax6.set_xticks(x)
-        ax6.set_xticklabels(labels)
-        ax6.legend()
-        st.pyplot(fig6)
-
-# --- 4. Live Algorithm Calculator (Sidebar) ---
-st.sidebar.header("🧮 2. Test SHUDDHOTA Algorithm")
-st.sidebar.write("Move the sliders to see how the system handles conflicting evidence and routes to human review.")
-
-D = st.sidebar.slider("AI Detector Evidence (D)", 0.0, 1.0, 0.80)
-P = st.sidebar.slider("Provenance Evidence (P)", 0.0, 1.0, 0.50)
-F = st.sidebar.slider("Fact-Check Evidence (F)", 0.0, 1.0, 0.90)
-C = st.sidebar.slider("Contextual Risk (C)", 0.0, 1.0, 0.60)
+c1, c2, c3, c4 = st.columns(4)
+D = c1.slider("AI Detector Evidence (D)", 0.0, 1.0, 0.80)
+P = c2.slider("Provenance Evidence (P)", 0.0, 1.0, 0.50)
+F = c3.slider("Fact-Check Evidence (F)", 0.0, 1.0, 0.90)
+C = c4.slider("Contextual Risk (C)", 0.0, 1.0, 0.60)
 
 score = 100 * (0.35 * D + 0.30 * P + 0.20 * F + 0.15 * C)
 
-st.sidebar.markdown("### 📝 Final Result")
-st.sidebar.metric(label="SHUDDHOTA Score", value=f"{score:.1f} / 100")
+res_col1, res_col2 = st.columns([1, 3])
+res_col1.metric(label="Calculated Score", value=f"{score:.1f} / 100")
 
-if score < 30:
-    st.sidebar.success("🟢 **LOW RISK:** Supported as authentic.")
-elif score > 70:
-    st.sidebar.error("🔴 **HIGH RISK:** Evidence of material synthesis.")
-else:
-    st.sidebar.warning("🟡 **UNCERTAINTY REGION:** Escalate to Human Review.")
-
-st.sidebar.markdown("---")
-st.sidebar.caption("Formula: $S = 100 \\times (0.35D + 0.30P + 0.20F + 0.15C)$")
+with res_col2:
+    st.write("") # Vertical alignment
+    if score < 30:
+        st.success("🟢 **DECISION:** LOW RISK. Supported as authentic.")
+    elif score > 70:
+        st.error("🔴 **DECISION:** HIGH RISK. Evidence of material synthesis.")
+    else:
+        st.warning("🟡 **DECISION:** UNCERTAINTY REGION. Escalate to Human Review.")
