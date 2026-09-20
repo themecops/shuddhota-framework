@@ -52,6 +52,16 @@ st.markdown("""
         margin-bottom: 20px;
         color: #1e40af;
     }
+    .footer {
+        text-align: center;
+        padding: 25px;
+        margin-top: 40px;
+        border-top: 1px solid #e5e7eb;
+        color: #6b7280;
+        font-size: 13px;
+        background-color: #ffffff;
+        border-radius: 12px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -74,66 +84,66 @@ def load_data(file):
         except FileNotFoundError:
             return None
 
-# --- POPUP MODALS (With width="large" for perfect responsive fitting) ---
+# --- POPUP MODALS (With width="large") ---
 @st.dialog("💡 Core Idea of SHUDDHOTA", width="large")
 def show_core_idea():
     st.markdown("### The Philosophy Behind SHUDDHOTA")
-    st.write("In Bangla, *Shuddhota* means purity, correctness, and integrity. The core idea is that mitigating AI-generated synthetic media (deepfakes) cannot be solved by technical detection alone[cite: 1].")
+    st.write("In Bangla, Shuddhota means purity, correctness, and integrity. The core idea is that mitigating AI-generated synthetic media (deepfakes) cannot be solved by technical detection alone.")
     st.markdown("""
     **The Six-Layer Citizen-First Architecture:**
-    1. **L1 - Helpline:** A single, trusted intake gateway for citizens[cite: 1].
-    2. **L2 - Score:** Transparent multi-evidence verification outputs[cite: 1].
-    3. **L3 - Card:** Practical digital and media literacy tools[cite: 1].
-    4. **L4 - Shokti:** Supervised community and youth support networks[cite: 1].
-    5. **L5 - Court:** Rapid, specialized legal protection pathways[cite: 1].
-    6. **L6 - Fund:** Victim compensation and recovery assistance[cite: 1].
+    1. **L1 - Helpline:** A single, trusted intake gateway for citizens.
+    2. **L2 - Score:** Transparent multi-evidence verification outputs.
+    3. **L3 - Card:** Practical digital and media literacy tools.
+    4. **L4 - Shokti:** Supervised community and youth support networks.
+    5. **L5 - Court:** Rapid, specialized legal protection pathways.
+    6. **L6 - Fund:** Victim compensation and recovery assistance.
     """)
 
 @st.dialog("⚙️ How the System Works", width="large")
 def show_how_it_works():
     st.markdown("### Technical & Analytical Workflow")
-    st.write("This dashboard automates the evaluation pipeline specified in Chapter 9 of the thesis[cite: 1].")
+    st.write("This dashboard automates the evaluation pipeline specified in Chapter 9 of the thesis.")
     st.markdown("""
-    * **Data Processing:** Ingests CSV records containing Likert survey scales and binary media ground truth labels[cite: 1].
-    * **Reliability Testing:** Mathematically computes Cronbach's Alpha across constructs (Digital Literacy, Trust, Willingness to Report)[cite: 1].
-    * **Machine Learning Pipeline:** Evaluates classification performance (ROC AUC, Precision-Recall, Confusion Matrix) using out-of-fold calibration logic[cite: 1].
-    * **Multi-Evidence Formula:** Combines model scores using registered weights[cite: 1]:
+    * **Data Processing:** Ingests CSV records containing Likert survey scales and binary media ground truth labels.
+    * **Reliability Testing:** Mathematically computes Cronbach's Alpha across constructs (Digital Literacy, Trust, Willingness to Report).
+    * **Machine Learning Pipeline:** Evaluates classification performance (ROC AUC, Precision-Recall, Confusion Matrix) using out-of-fold calibration logic.
+    * **Multi-Evidence Formula:** Combines model scores using registered weights:
     """)
     st.latex(r"S = 100 \times (0.35D + 0.30P + 0.20F + 0.15C)")
-    st.caption("Where D=Detector (35%), P=Provenance (30%), F=Fact-Check (20%), C=Context (15%)[cite: 1].")
+    st.caption("Where D=Detector (35%), P=Provenance (30%), F=Fact-Check (20%), C=Context (15%).")
 
 @st.dialog("📖 Thesis Mapping & Metrics Guide", width="large")
 def show_thesis_mapping():
     st.markdown("### Detailed Thesis Mapping & Scientific Relation")
-    st.write("Here is how every metric and visualization on this dashboard directly ties back to the core objectives of the thesis[cite: 1]:")
+    st.write("Here is how every metric and visualization on this dashboard directly ties back to the core objectives of the thesis:")
     
     st.markdown("---")
     st.markdown("#### 📊 Quantitative Performance Metrics (Track B)")
     st.markdown("""
-    * **ROC AUC Score:** Measures overall discrimination capacity between genuine media and synthetic deepfakes across all thresholds. *Relation:* Proves that combining the ResNet-50 + LSTM baseline model with multi-evidence signals yields an 'Excellent' classification standard (>0.90) for the Site J simulation frame ($n=100$)[cite: 1].
-    * **F1 Harmonized Score:** Harmonic mean between precision and recall, balancing authentic and manipulated content. *Relation:* Demonstrates minimization of false positives and false negatives to protect freedom of expression[cite: 1].
-    * **Overall Accuracy:** Raw percentage of correctly classified instances. *Relation:* Establishes baseline operational correctness before uncertainty abstention[cite: 1].
-    * **Brier Calibration Loss:** Measures mean squared error of predicted probabilities after Platt scaling. *Relation:* Proves model outputs are reliably calibrated probabilities (<0.15)[cite: 1].
+    * **ROC AUC Score:** Measures overall discrimination capacity between genuine media and synthetic deepfakes across all thresholds. *Relation:* Proves that combining the ResNet-50 + LSTM baseline model with multi-evidence signals yields an 'Excellent' classification standard (>0.90) for the Site J simulation frame (n=100).
+    * **F1 Harmonized Score:** Harmonic mean between precision and recall, balancing authentic and manipulated content. *Relation:* Demonstrates minimization of false positives and false negatives to protect freedom of expression.
+    * **Overall Accuracy:** Raw percentage of correctly classified instances. *Relation:* Establishes baseline operational correctness before uncertainty abstention.
+    * **Brier Calibration Loss:** Measures mean squared error of predicted probabilities after Platt scaling. *Relation:* Proves model outputs are reliably calibrated probabilities (<0.15).
     """)
 
     st.markdown("---")
     st.markdown("#### 📈 Visual Diagnostic Charts")
     st.markdown("""
-    * **ROC Curve:** Graphically displays True Positive Rate vs. False Positive Rate. *Relation:* Backs up the high ROC AUC metric (~0.944)[cite: 1].
-    * **Precision-Recall Curve:** Focuses on the 'Synthetic' class performance. *Relation:* Ensures flagged deepfakes are genuinely malicious[cite: 1].
-    * **Confusion Matrix:** Explicit breakdown of True/False Positives and Negatives under a 0.5 cutoff[cite: 1].
-    * **Media Task Profile:** Illustrates the balanced 50/50 experimental design of the Site J simulation frame ($n=50$ authentic, $n=50$ synthetic)[cite: 1].
-    * **Internal Consistency (Cronbach’s Alpha > 0.70):** Evaluates the 24 Likert survey items across 6 constructs. *Relation:* Proves psychometric survey instruments are internally reliable[cite: 1].
-    * **Comparative Fit Profile (Track A & Track B):** Visualizes Chapter 10's Two-Track evaluation against comparators (C1-C4). *Relation:* Proves SHUDDHOTA achieves 100% functional coverage and the highest integrated fit score (0.9407)[cite: 1].
+    * **ROC Curve:** Graphically displays True Positive Rate vs. False Positive Rate. *Relation:* Backs up the high ROC AUC metric (~0.944).
+    * **Precision-Recall Curve:** Focuses on the 'Synthetic' class performance. *Relation:* Ensures flagged deepfakes are genuinely malicious.
+    * **Confusion Matrix:** Explicit breakdown of True/False Positives and Negatives under a 0.5 cutoff.
+    * **Media Task Profile:** Illustrates the balanced 50/50 experimental design of the Site J simulation frame (n=50 authentic, n=50 synthetic).
+    * **Internal Consistency (Cronbach’s Alpha > 0.70):** Evaluates the 24 Likert survey items across 6 constructs. *Relation:* Proves psychometric survey instruments are internally reliable.
+    * **Comparative Fit Profile (Track A & Track B):** Visualizes Chapter 10's Two-Track evaluation against comparators (C1-C4). *Relation:* Proves SHUDDHOTA achieves 100% functional coverage and the highest integrated fit score (0.9407).
     """)
 
 @st.dialog("🏆 Uniqueness & Superiority", width="large")
 def show_uniqueness():
     st.markdown("### Why SHUDDHOTA is Better Than Existing Approaches")
     st.markdown("""
-    * **Beyond Single Detectors (C1):** Standard tools only output a probability score without offering a legal, reporting, or remedy path. SHUDDHOTA covers the *entire* citizen journey (100% functional coverage)[cite: 1].
-    * **Context-Aware Calibration:** Uses Platt scaling and multi-evidence blending (Provenance + Fact-checking) to adapt to low-resource and Bangla linguistic constraints[cite: 1].
-    * **Two-Track Evaluation:** Formally validated via a rigorous mixed-track framework combining functional completeness and quantitative precision[cite: 1].
+    * **Beyond Single Detectors (C1):** Standard tools only output a probability score without offering a legal, reporting, or remedy path. SHUDDHOTA covers the *entire* citizen journey (100% functional coverage).
+    * **Context-Aware Calibration:** Uses Platt scaling and multi-evidence blending (Provenance + Fact-checking) to adapt to low-resource and Bangla linguistic constraints.
+    * **Two-Track Evaluation:** Formally validated via a rigorous mixed-track framework combining functional completeness and quantitative precision.
     """)
 
 @st.dialog("👨‍💻 Author & Supervisor Information", width="large")
@@ -141,23 +151,23 @@ def show_author_info():
     st.markdown("### Academic Credentials")
     st.markdown("""
     **Thesis Title:**  
-    *Mitigating AI-Generated Synthetic Media Threats in Bangladesh: An Integrated Framework for Detection, Policy, and Societal Resilience*[cite: 1]
+    *Mitigating AI-Generated Synthetic Media Threats in Bangladesh: An Integrated Framework for Detection, Policy, and Societal Resilience*
     
     **Author / Researcher:**  
-    * **Name:** Syed Ashik Mahmud[cite: 1]
-    * **Roll/ID No:** 6241020202[cite: 1]
-    * **Registration No:** 00685[cite: 1]
-    * **Degree:** Master of Science in Computer and Communication Engineering (CCE)[cite: 1]
+    * **Name:** Syed Ashik Mahmud
+    * **Roll/ID No:** 6241020202
+    * **Registration No:** 00685
+    * **Degree:** Master of Science in Computer and Communication Engineering (CCE)
     
     **Supervisor:**  
-    * **Name:** Professor Golam Md. Muradul Bashir[cite: 1]
-    * **Department:** Department of Computer and Communication Engineering (CCE)[cite: 1]
-    * **Institution:** Patuakhali Science and Technology University (PSTU), Bangladesh[cite: 1]
+    * **Name:** Professor Golam Md. Muradul Bashir
+    * **Department:** Department of Computer and Communication Engineering (CCE)
+    * **Institution:** Patuakhali Science and Technology University (PSTU), Bangladesh
     """)
 
 # --- HEADER SECTION WITH CLEAN ACTION BUTTONS ---
 st.markdown("# 🛡️ SHUDDHOTA Intelligence Dashboard")
-st.markdown("##### *Integrated Framework for Synthetic Media Governance & Resilience in Bangladesh*[cite: 1]")
+st.markdown("##### *Integrated Framework for Synthetic Media Governance & Resilience in Bangladesh*")
 st.markdown("<br>", unsafe_allow_html=True)
 
 # Navigation Buttons Row (Responsive columns)
@@ -381,7 +391,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 # --- ALGORITHM TESTER SECTION ---
 st.markdown('<div class="card">', unsafe_allow_html=True)
 st.subheader("⚙️ Step 4: Interactive Decision Logic Simulator")
-st.write("Test how the framework reacts to different evidentiary signals in real time. Adjust sliders to see the system avoid false positives via the uncertainty window[cite: 1].")
+st.write("Test how the framework reacts to different evidentiary signals in real time. Adjust sliders to see the system avoid false positives via the uncertainty window.")
 
 c1, c2, c3, c4 = st.columns(4)
 D = c1.slider("AI Detector Evidence (D)", 0.0, 1.0, 0.80)
@@ -410,3 +420,12 @@ with res_col2:
         st.warning("🟡 **SYSTEM DECISION: UNCERTAINTY REGION** — Signals conflict or fall within neutral thresholds. **Automatically routing case to Human Expert Review (Abstention Safeguard).**")
 
 st.markdown('</div>', unsafe_allow_html=True)
+
+# --- MODERN FOOTER ---
+st.markdown("""
+<div class="footer">
+    <p style="margin: 0; font-weight: 600; color: #374151;">© 2026 Syed Ashik Mahmud. All Rights Reserved.</p>
+    <p style="margin: 5px 0 0 0; color: #4b5563;">Department of Computer and Communication Engineering (CCE)</p>
+    <p style="margin: 2px 0 0 0; color: #6b7280;">Patuakhali Science and Technology University (PSTU), Bangladesh</p>
+</div>
+""", unsafe_allow_html=True)
